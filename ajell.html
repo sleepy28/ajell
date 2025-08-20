@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>wleeee</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(to top, #ffdde1, #ee9ca7);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Gambar Kelinci */
+    .rabbit {
+      position: absolute;
+      bottom: 20px;
+      width: 120px;
+      height: auto;
+    }
+    #rabbit-left { left: 40px; }
+    #rabbit-right { right: 40px; }
+
+    /* Peluru hati */
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(-45deg);
+      opacity: 0.9;
+      transition: all 2s ease;
+    }
+    .heart::before, .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+    .heart::before { top: -10px; left: 0; }
+    .heart::after { left: 10px; top: 0; }
+
+    /* Tulisan pesan */
+    .message {
+      position: absolute;
+      top: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 2s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ganti src dengan gambar PNG kelinci memegang pistol -->
+  <img src="left.png" id="rabbit-left" class="rabbit">
+  <img src="right.png" id="rabbit-right" class="rabbit">
+  
+  <div class="message">Kang marah 😝</div>
+
+  <script>
+    const heartPositions = [];
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2 + 50;
+    const size = 40; // semakin besar semakin rapat pola love
+
+    // rumus parametric love: x(t), y(t)
+    for (let t = 0; t < 2 * Math.PI; t += Math.PI / size) {
+      let x = 16 * Math.pow(Math.sin(t), 3);
+      let y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+      heartPositions.push({x: centerX + x * 15, y: centerY - y * 15});
+    }
+
+    let index = 0;
+    let side = "left";
+    const interval = setInterval(() => {
+      if (index >= heartPositions.length) {
+        clearInterval(interval);
+        // tampilkan tulisan dengan delay 1 detik
+        setTimeout(() => {
+          document.querySelector(".message").style.opacity = 1;
+        }, 1000);
+        return;
+      }
+
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      document.body.appendChild(heart);
+
+      let startX = (side === "left") ? 100 : window.innerWidth - 100;
+      let startY = window.innerHeight - 150;
+      heart.style.left = startX + "px";
+      heart.style.top = startY + "px";
+
+      // animasi ke posisi target
+      setTimeout(() => {
+        heart.style.left = heartPositions[index].x + "px";
+        heart.style.top = heartPositions[index].y + "px";
+      }, 50);
+
+      index++;
+      side = (side === "left") ? "right" : "left";
+    }, 150);
+  </script>
+</body>
+</html>
